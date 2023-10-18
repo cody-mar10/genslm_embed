@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "genslm-embed"
+version = "0.0.1"
+authors = [{ name = "Cody Martin", email = "codycmar10@gmail.com" }]
+description = "Model inference with GenSLM"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+
+dependencies = [
+    "torch>=2",
+    "genslm @ git+https://github.com/ramanathanlab/genslm",
+    "einops",
+    "tables",
+    "pyfastatools",
+    "more-itertools",
+]
+
+[project.scripts]
+genslm = "genslm_embed:main.main"
+
+[project.urls]
+"Homepage" = "https://github.com/cody-mar10/genslm_embed"
+"Bug Tracker" = "https://github.com/cody-mar10/genslm_embed/issues"
+
+[tool.ruff]
+src = ["src"]
+line-length = 90
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"] # allow unused imports in `__init__.py`
+
+[tool.coverage.run]
+plugins = ["covdefaults"]
