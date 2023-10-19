@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "genslm-embed"
-version = "0.0.1"
+version = "0.0.2"
 authors = [{ name = "Cody Martin", email = "codycmar10@gmail.com" }]
 description = "Model inference with GenSLM"
 readme = "README.md"
