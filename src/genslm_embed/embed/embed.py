@@ -1,49 +1,18 @@
-from dataclasses import dataclass
 from typing import Literal, Optional
 
 import einops
 import tables as tb
 import torch
 from genslm import GenSLM
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from genslm_embed.embed.data import (
+    SequenceBatch,
+    SlicedBatchSampler,
+    TokenizedSequenceDataset,
+)
 from genslm_embed.utils import TABLES_COMPRESSION, FilePath, ModelTypes
-
-
-@dataclass
-class SequenceBatch:
-    tokens: torch.Tensor
-    attn_mask: torch.Tensor
-
-    def to(self, device: torch.device | str) -> "SequenceBatch":
-        cls = self.__class__
-        return cls(tokens=self.tokens.to(device), attn_mask=self.attn_mask.to(device))
-
-
-class TokenizedSequenceDataset(Dataset):
-    def __init__(self, file: FilePath):
-        with tb.File(file) as fp:
-            self.attn_mask = torch.from_numpy(fp.root.attn_mask[:])
-            self.tokens = torch.from_numpy(fp.root.tokens[:])
-
-    def __getitem__(self, idx: int | slice) -> SequenceBatch:
-        return SequenceBatch(tokens=self.tokens[idx], attn_mask=self.attn_mask[idx])
-
-    def __len__(self) -> int:
-        return int(self.tokens.size(0))
-
-    @staticmethod
-    def collate(batch: list[SequenceBatch]) -> SequenceBatch:
-        batch_tokens: list[torch.Tensor] = list()
-        batch_attn_mask: list[torch.Tensor] = list()
-        for data in batch:
-            batch_tokens.append(data.tokens)
-            batch_attn_mask.append(data.attn_mask)
-
-        return SequenceBatch(
-            tokens=torch.stack(batch_tokens), attn_mask=torch.stack(batch_attn_mask)
-        )
 
 
 class GenSLMPredictor:
@@ -67,10 +36,14 @@ class GenSLMPredictor:
         self.model = GenSLM(model_id, model_cache_dir).to(device=self.device)
 
     def dataloader(self, batch_size: int = 64) -> DataLoader[SequenceBatch]:
+        sampler = SlicedBatchSampler(
+            dataset=self.dataset, batch_size=batch_size, drop_last=False
+        )
         return DataLoader[SequenceBatch](
             dataset=self.dataset,
-            batch_size=batch_size,
+            batch_size=None,
             shuffle=False,
+            sampler=sampler,
             collate_fn=self.dataset.collate,
         )
 
