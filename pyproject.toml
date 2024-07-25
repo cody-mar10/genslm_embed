@@ -9,7 +9,7 @@ authors = [{ name = "Cody Martin", email = "codycmar10@gmail.com" }]
 description = "Model inference with GenSLM"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -17,6 +17,7 @@ classifiers = [
 
 dependencies = [
     "torch>=2",
+    "numpy<2.0",
     "genslm @ git+https://github.com/ramanathanlab/genslm",
     "einops",
     "tables",
