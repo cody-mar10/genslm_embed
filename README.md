@@ -12,7 +12,9 @@ Generating [GenSLM](https://github.com/ramanathanlab/genslm) ORF and genome embe
 
 ```bash
 # setup torch first -- conda does this so much better than pip
-mamba create -n genslm_embed -c pytorch -c conda-forge 'pytorch>=2.0' cpuonly 'python<3.12'
+mamba create -n genslm-embed -c pytorch -c conda-forge 'pytorch>=2.0' cpuonly 'python<3.12'
+
+mamba activate genslm-embed
 
 # install latest updates from this repository
 pip install git+https://github.com/cody-mar10/genslm_embed.git
@@ -22,7 +24,9 @@ pip install git+https://github.com/cody-mar10/genslm_embed.git
 
 ```bash
 # setup torch first -- conda does this so much better than pip
-mamba create -n genslm_embed -c pytorch -c nvidia -c conda-forge 'pytorch>=2.0' pytorch-cuda=11.8 'python<3.12'
+mamba create -n genslm-embed -c pytorch -c nvidia -c conda-forge 'pytorch>=2.0' pytorch-cuda=11.8 'python<3.12'
+
+mamba activate genslm-embed
 
 # install latest updates from this repository
 pip install git+https://github.com/cody-mar10/genslm_embed.git
