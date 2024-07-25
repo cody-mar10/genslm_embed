@@ -2,6 +2,10 @@
 
 Generating [GenSLM](https://github.com/ramanathanlab/genslm) ORF and genome embeddings for viral genes and genomes.
 
+## Disclaimer
+
+**This is a wrapper repository for GenSLM. For any problems specific to GenSLM, please contact the above repository.** We did not develop GenSLM, so we make no guarantees about it.
+
 ## Installation
 
 ### Without GPUs
