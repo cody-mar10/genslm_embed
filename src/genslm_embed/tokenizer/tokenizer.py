@@ -2,25 +2,21 @@ from typing import Iterator
 
 import numpy as np
 import tables as tb
-from fastatools import FastaFile
 from genslm import GenSLM, SequenceDataset
 from more_itertools import chunked
+from pyfastatools import Parser
 
 from genslm_embed.utils import TABLES_COMPRESSION, FilePath
 
 
-def read_fasta_chunks(
-    fasta: FastaFile, max_seq_size: int, n_seqs: int = 10000
-) -> Iterator[list[str]]:
+def read_fasta_chunks(fasta: Parser, max_seq_size: int, n_seqs: int = 10000) -> Iterator[list[str]]:
     sequences: list[str] = list()
 
-    for record in fasta.parse():
+    for record in fasta:
         if len(record.sequence) <= max_seq_size:
-            sequences.append(record.sequence)
+            sequences.append(record.seq)
         else:
-            sequences.extend(
-                "".join(chunk) for chunk in chunked(record.sequence, n=max_seq_size)
-            )
+            sequences.extend("".join(chunk) for chunk in chunked(record.seq, n=max_seq_size))
 
         if len(sequences) >= n_seqs:
             yield sequences
@@ -30,18 +26,20 @@ def read_fasta_chunks(
         yield sequences
 
 
-def expected_tokens(fasta: FastaFile, max_seq_size: int) -> int:
+def expected_tokens(fasta: Parser, max_seq_size: int) -> int:
     n = 0
-    for record in fasta.parse():
-        if len(record.sequence) <= max_seq_size:
+    for record in fasta:
+        if len(record.seq) <= max_seq_size:
             n += 1
         else:
-            for _ in chunked(record.sequence, n=max_seq_size):
+            for _ in chunked(record.seq, n=max_seq_size):
                 n += 1
+
+    parser.refresh()
     return n
 
 
-def tokenize(model: GenSLM, fasta: FastaFile, output: FilePath):
+def tokenize(model: GenSLM, fasta: Parser, output: FilePath):
     max_seq_size = model.seq_length * 3
 
     rows = expected_tokens(fasta, max_seq_size)

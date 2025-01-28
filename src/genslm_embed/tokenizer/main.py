@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from fastatools import FastaFile
 from genslm import GenSLM
+from pyfastatools import Parser
 
 from genslm_embed.tokenizer.tokenizer import tokenize
 from genslm_embed.utils import FilePath, ModelArgs, add_model_args
@@ -52,7 +52,7 @@ def main(args: Optional[Args] = None):
         args = parse_args()
 
     model = GenSLM(model_id=args.model_id, model_cache_dir=args.model_cache)
-    fasta = FastaFile(args.fasta)
+    fasta = Parser(args.fasta)
 
     tokenize(model, fasta, args.output)
 
